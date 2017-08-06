@@ -3,6 +3,9 @@ import java.util.Scanner;
 public class Fibonacci {
 
 	public static void main(String[] args) {
+    System.out.println("This program prints the Fibonacci sequence to a specified term number, e.g. the 1st, 3rd, or 100th term.");
+    System.out.println();
+        
     long even = 0;
     long odd = 1;        
     long toPrint = 0; // use this in printing to prevent stack overflows
