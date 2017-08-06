@@ -6,7 +6,10 @@ public class Fibonacci {
     long even = 0;
     long odd = 1;        
     long toPrint = 0; // use this in printing to prevent stack overflows
-	long to_go_to = getLong("Enter the number of terms in the Fibonacci series to which to print (nth number), using 0 as the 0th term. Due to stack overflow errors, the maximum number of terms is 93 (to 92nd term).");
+	long to_go_to = getLong("Please give the term number in the Fibonacci sequence to print to (e.g. 0th, 2nd, or 53rd. Due to stack overflow errors, the maximum number of terms is 93 (to 92nd term).");
+        
+    System.out.println();
+    System.out.println("Program now printing the Fibonacci sequence to the " + to_go_to + getOrdinal(to_go_to) + " term.");
         
     for (long i = 0; i <= to_go_to && (toPrint > 0 || i < 2); i++) {
         if (i %2 == 0) { // an even term no
@@ -51,7 +54,12 @@ public class Fibonacci {
         }
         catch (Exception e) {
             System.out.println();
-            System.out.println("Your input was invalid; please give a valid long type numeric value.");
+            System.out.println("Your input was invalid; please give a valid, postive, long type numeric value.");
+            toReturn = getLong(instructions);
+        }
+        if (toReturn < 0) {
+            System.out.println();
+            System.out.println("Your input was invalid; please give a valid, postive, long type numeric value.");
             toReturn = getLong(instructions);
         }
         return toReturn;
