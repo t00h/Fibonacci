@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class Fibonacci {
 
+    public static final BigInteger ONE = new BigInteger("1");
+    public static final BigInteger ZERO = new BigInteger("0");
+
     public static void main(String[] args) {
         System.out.println("This program will print out the Fibonacci sequence to a specified term number, or will print the number at a specified term number in the sequence.");
         String input = getString("Please choose whether to print the whole sequence (input \"S\") or only the number (input \"N\") at the specified term number.");
@@ -14,7 +17,8 @@ public class Fibonacci {
             printSequence();
         }
         else {
-            printNumber();
+            printNumberFromFormula();
+            //printNumberFromLoop();
         }
     }
 
@@ -22,16 +26,17 @@ public class Fibonacci {
     System.out.println("This method prints the Fibonacci sequence to a specified term number, e.g. the 1st, 3rd, or 100th term.");
     System.out.println();
         
-    BigInteger even = new BigInteger("0");
-    BigInteger odd = new BigInteger("1");
-    BigInteger toPrint = new BigInteger("0"); // use this in printing to prevent stack overflows
-	long to_go_to = getLong("Please give the term number in the Fibonacci sequence to print to (e.g. 0th, 2nd, or 53rd).");
+    BigInteger even = ZERO;
+    BigInteger odd = ONE;
+    BigInteger toPrint = ZERO; // use this in printing to prevent stack overflows
+    BigInteger to_go_to = getBigInteger("Please give the term number in the Fibonacci sequence to print to (e.g. 0th, 2nd, or 53rd).");
         
     System.out.println();
     System.out.println("Program now printing the Fibonacci sequence to the " + addCommas(to_go_to) + getOrdinal(to_go_to) + " term.");
         
-    for (long i = 0; i <= to_go_to; i++) {
-        if (i %2 == 0) { // an even term no
+    for (BigInteger i = new BigInteger("0"); isLessThanOrEqualTo(i, to_go_to); i.add(ONE)) { // i <= to_go_to
+
+        if (isEven(i)) { // an even term no
             toPrint = even;
             even = even.add(odd); // even += odd
         }
@@ -44,20 +49,20 @@ public class Fibonacci {
     System.out.println("Program done.");
 	}
 
-	public static void printNumber() {
+	public static void printNumberFromLoop() {
 	    System.out.println("This method prints the number in the Fibonacci sequence at a specified term number, e.g. the 1st, 3rd, or 100th term.");
         System.out.println();
 
         BigInteger even = new BigInteger("0");
         BigInteger odd = new BigInteger("1");
         BigInteger toPrint = new BigInteger("0"); // use this in printing to prevent stack overflows
-        long to_go_to = getLong("Please give the term number in the Fibonacci sequence to print (e.g. 0th, 2nd, or 53rd).");
+        BigInteger to_go_to = getBigInteger("Please give the term number in the Fibonacci sequence to print (e.g. 0th, 2nd, or 53rd).");
 
         System.out.println();
         System.out.println("Program now printing the number at the " + addCommas(to_go_to) + getOrdinal(to_go_to) + " term in the Fibonacci sequence.");
 
-        for (long i = 0; i <= to_go_to; i++) {
-            if (i %2 == 0) { // an even term no
+        for (BigInteger i = new BigInteger("0"); isLessThanOrEqualTo(i, to_go_to); i.add(ONE)) { // i <= to_go_to;
+            if (isEven(i)) { // an even term no
                 toPrint = even;
                 even = even.add(odd); // even += odd
             }
@@ -67,6 +72,20 @@ public class Fibonacci {
             }
         }
         System.out.println("The number at the " + addCommas(to_go_to) + getOrdinal(to_go_to) + " term in the Fibonacci sequence is: \n" + toPrint.toString() + "\nProgram done.");
+    }
+
+    public static void printNumberFromFormula() {
+        System.out.println("This method prints the number in the Fibonacci sequence at a specified term number, e.g. the 1st, 3rd, or 100th term.");
+        System.out.println();
+
+        BigInteger termNo = getBigInteger("Please give the term number in the Fibonacci sequence to print (e.g. 0th, 2nd, or 53rd).");
+
+        BigInteger result = new BigInteger("0");
+        result.subtract(ONE);
+
+        System.out.println();
+        System.out.println("Program now printing the number at the " + addCommas(termNo) + getOrdinal(termNo) + " term in the Fibonacci sequence.");
+        System.out.println("The number at the " + addCommas(termNo) + getOrdinal(termNo) + " term in the Fibonacci sequence is: \n" + result.toString() + "\nProgram done.");
     }
     
     public static String getOrdinal(long i) {
@@ -85,26 +104,44 @@ public class Fibonacci {
         } 
         return "th";
     }
-    
-    public static long getLong(String instructions) {
-	System.out.println(instructions);
-        boolean inputWasValid = false;
+
+    public static String getOrdinal(BigInteger i) {
+        String inputString = new String(i.toString());
+        String penDigit = "";
+        if (inputString.length() > 1) penDigit = String.valueOf(inputString.charAt(inputString.length() - 2)); // penultimate - second to last
+        String lastDigit = String.valueOf(inputString.charAt(inputString.length() - 1));
+        if (!penDigit.equals("1")) {
+            if (lastDigit.equals("1")) {
+                return "st";
+            }
+            if (lastDigit.equals("2")) {
+                return "nd";
+            }
+            if (lastDigit.equals("3")) {
+                return "rd";
+            }
+        }
+        return "th"; // effectively an else: default
+    }
+
+    public static BigInteger getBigInteger(String instructions) {
+        System.out.println(instructions);
         Scanner reader = new Scanner(System.in);
-        long toReturn = -1;
+        BigInteger toReturn = new BigInteger("0");
+        toReturn.subtract(ONE);
         try {
-            long input = (long) reader.nextLong();
+            BigInteger input = (BigInteger) reader.nextBigInteger();
             toReturn = input;
-            inputWasValid = true;
         }
         catch (Exception e) {
             System.out.println();
-            System.out.println("Your input was invalid; please give a valid, postive, long type numeric value.");
-            toReturn = getLong(instructions);
+            System.out.println("Your input was invalid; please give a valid, postive, BigInteger type numeric value.");
+            toReturn = getBigInteger(instructions);
         }
-        if (toReturn < 0) {
+        if (isLessThan(toReturn, ZERO) == true) { // toReturn < 0
             System.out.println();
-            System.out.println("Your input was invalid; please give a valid, postive, long type numeric value.");
-            toReturn = getLong(instructions);
+            System.out.println("Your input was invalid; please give a valid, postive, BigInteger type numeric value.");
+            toReturn = getBigInteger(instructions);
         }
         return toReturn;
     }
@@ -141,5 +178,43 @@ public class Fibonacci {
         }
         else commaString = numAsString;
         return commaString;
+    }
+
+    public static String addCommas(BigInteger numIn) {
+        String numAsString = new String(numIn.toString());
+        String commaString = "";
+
+        if (numAsString.length() > 3) {
+            for (int i = numAsString.length() - 1; i >= 0; i--) {
+                if (i < numAsString.length() - 2 && numAsString.length() > 3) {
+                    if ((i + 2) % 3 == 0) {
+                        commaString = "," + numAsString.substring(numAsString.length() - 3, numAsString.length()) + commaString;
+                        numAsString = numAsString.substring(0, numAsString.length() - 3);
+                    }
+                } else if (numAsString.length() < 4) {
+                    commaString = numAsString + commaString;
+                    numAsString = "";
+                }
+            }
+        }
+        else commaString = numAsString;
+        return commaString;
+    }
+
+
+    public static boolean isEven (BigInteger numIn) {
+        return numIn.mod(new BigInteger("2")).equals(BigInteger.ZERO);
+    }
+
+    public static boolean isLessThan(BigInteger firstNo, BigInteger secondNo) {
+        int result = firstNo.compareTo(secondNo);
+        if (result == -1) return true;
+        else return false;
+    }
+
+    public static boolean isLessThanOrEqualTo(BigInteger firstNo, BigInteger secondNo) {
+        int result = firstNo.compareTo(secondNo);
+        if (result == -1 || result == 0) return true;
+        else return false;
     }
 }
