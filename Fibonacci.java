@@ -206,6 +206,11 @@ public class Fibonacci {
         return numIn.mod(new BigInteger("2")).equals(BigInteger.ZERO);
     }
 
+
+    public static boolean isOdd (BigInteger numIn) {
+        return ! isEven(numIn);
+    }
+
     public static boolean isLessThan(BigInteger firstNo, BigInteger secondNo) {
         int result = firstNo.compareTo(secondNo);
         if (result == -1) return true;
